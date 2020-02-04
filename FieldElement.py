@@ -34,7 +34,7 @@ class FieldElement:
 
     def __mul__(self, other):
         if self.prime != other.prime:
-            raise TypeError('Cannot multifly two numbers in different Fields')
+            raise TypeError('Cannot multiply two numbers in different Fields')
         num = (self.num * other.num) % self.prime
         return self.__class__(num, self.prime)
 
@@ -42,3 +42,14 @@ class FieldElement:
         n = exponent % (self.prime -1)
         num = pow(self.num, n, self.prime)
         return self.__class__(num, self.prime)
+
+    def __div__(self, other):
+        if self.prime != other.prime:
+            raise TypeError('Cannot divide two numbers in different Fields')
+        num = (self.num * pow(other.num, self.prime - 2, self.prime)) % self.prime
+        return self.__class__(num, self.prime)
+
+    def __rmul__(self, coefficient):
+        num = (self.num * coefficient) % self.prime
+        return self.__class__(num, self.prime)
+

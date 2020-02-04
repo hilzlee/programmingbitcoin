@@ -1,3 +1,5 @@
+from FieldElement import *
+
 class Point:
     def __init__(self, x, y, a, b):
         self.a = a
@@ -12,6 +14,8 @@ class Point:
     def __repr__(self):
         if self.x == None:
             return 'Point(infinity)'
+        if isinstance(self.x, FieldElement):
+            return 'Point_({},{})_{}_{} FieldElement({})'.format(self.x.num, self.y.num, self.a.num, self.b.num, self.x.prime)
         return 'Point_({},{})_{}_{}'.format(self.x, self.y, self.a, self.b)
 
     def __eq__(self, other):
@@ -30,7 +34,7 @@ class Point:
         if self.x == other.x and self.y != other.y:
             return self.__class__(None, None, self.a, self.b)
         if self.x != other.x:
-            s = (other.y - self.y)/(other.x - self.x)
+            s = (other.y - self.y) / (other.x - self.x)
             x3 = s ** 2 - self.x - other.x
             y3 = s * (self.x - x3) - self.y
             return self.__class__(x3, y3, self.a, self.b)
@@ -41,3 +45,14 @@ class Point:
             x3 = s ** 2 - 2 * self.x
             y3 = s * (self.x - x3) - self.y
             return self.__class__(x3, y3, self.a, self.b)
+
+    def __rmul__(self, coefficient):
+        coef = coefficient
+        current = self
+        result = self.__class__(None, None, self.a, self.b)
+        while coef:
+            if coef & 1:
+                result += current
+            current += current
+            coef >>= 1
+        return result
